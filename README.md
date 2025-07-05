@@ -1,78 +1,64 @@
-# MxLRC
-Command line tool to fetch synced lyrics from [Musixmatch](https://www.musixmatch.com/) and save it as *.lrc file.
+# MxLRC Docker-Compose
 
----
+This repository provides a simple way to run [mxlrc](https://github.com/fashni/MxLRC) a command-line tool for downloading .lrc lyric files from [Musixmatch](https://www.musixmatch.com/), inside a Docker container.  
 
-## Go version
-I'm currently learning Go and I cannot think of a project to start with. So I decided to rewrite this script in Go.
+## Configuration
 
-[Check it out here](https://github.com/fashni/mxlrc-go)
+Adapt the following `docker-compose.yml` to your needs.
 
----
-
-## Downloads
-### Standalone binary
-Download from [Release page](https://github.com/fashni/MxLRC/releases)
-### Python script
-Required Python 3.6+
-- Clone/download this repo
-- Install dependancy with pip
 ```
-pip install -r requirements.txt
-```
+services:
+  mxlrc:
+    container_name: mxlrc
+    image: ghcr.io/m4rc-xx/mxlrc:latest
+    restart: 'no'
 
----
+    # --- Volumes ---
+    # This is where the user's local music directory is "mounted" into the container.
+    # The user needs to adjust the path on the left to their actual path.
+    volumes:
+      - /media/pi/Harddrive/Music::/music # Example: Mounts a 'music' folder from the current directory
 
-## Usage
-```
-usage: mxlrc.py [-h] -s SONG [SONG ...] [-o OUTDIR] [-t SLEEP] [-d DEPTH] [-u]
-                [--bfs] [-q] [--token TOKEN]
+    environment:
+      # The user's personal Musixmatch token
+      - MX_TOKEN= #Musixmatch Usertoken
 
-Fetch synced lyrics (*.lrc file) from Musixmatch
+      # The directory inside the container to be scanned.
+      # Must match the target path in the "volumes" section.
+      - MUSIC_DIR=/music
 
-optional arguments:
-  -h, --help              show this help message and exit
-  -s SONG [SONG ...], --song SONG [SONG ...]
-                          song information in the format [ artist,title ], a
-                          text file containing list of songs, or a directory
-                          containing the song files
-  -o OUTDIR, --out OUTDIR output directory to save the .lrc file(s), default:
-                          lyrics
-  -t SLEEP, --sleep SLEEP sleep time (seconds) in between request, default: 30
-  -d DEPTH, --depth DEPTH (directory mode) maximum recursion depth, default: 100
-  -u, --update            (directory mode) rewrite existing .lrc files inside the
-                          output directory
-  --bfs                   (directory mode) use breadth first search for scanning
-                          directory
-  -q, --quiet             suppress logging output
-  --token TOKEN           musixmatch token
+      # Time in seconds to wait between individual downloads.
+      - SLEEP_TIME=15
+
+      # Set to "true" to overwrite existing .lrc files.
+      # Otherwise, set to "false".
+      - UPDATE_FILES=false
 ```
 
-## Example:
-### One song
-```
-mxlrc -s adele,hello
-```
-### Multiple song and custom output directory
-```
-mxlrc -s adele,hello "the killers,mr. brightside" -o some_directory
-```
-### With a text file and custom sleep time
-```
-mxlrc -s example_input.txt -t 20
-```
-### Directory Mode (recursive)
-```
-mxlrc -s "Dream Theater"
-```
-> **_This option overrides the `-o/--outdir` argument which means the lyrics will be saved in the same directory as the given input._**
+### Explanation of Configuration Options
 
-> **_The `-d/--depth` argument limit the depth of subdirectory to scan. Use `-d 0` or `--depth 0` to only scan the specified directory._**
+#### `volumes`
 
----
+-   `- /path/to/your/music:/music`
+    
+    -   **Left Side:** Replace `/path/to/your/music` with the absolute path to the music folder on your host system (e.g., `/media/pi/Toshiba/Musik/Rap/Interpreten`).
+        
+    -   **Right Side:**  `/music` is the path inside the container. This should not be changed.
+        
 
-## How to get the Musixmatch Token
-Follow steps 1 to 5 from the guide [here](https://spicetify.app/docs/faq#sometimes-popup-lyrics-andor-lyrics-plus-seem-to-not-work) to get a new Musixmatch token.
+#### `environment`
+
+-   `MX_TOKEN`: **(Required)** Insert your personal Musixmatch token here. Instructions on how to get one can be found [here](https://spicetify.app/docs/faq#sometimes-popup-lyrics-andor-lyrics-plus-seem-to-not-work "null").
+    
+-   `MUSIC_DIR`: The directory _inside_ the container that will be scanned. Must match the target path of the volume (`/music`).
+    
+-   `SLEEP_TIME`: The pause in seconds between each API request to avoid overloading the Musixmatch servers. The default is `15`.
+    
+-   `UPDATE_FILES`: Set this value to `true` if you want existing `.lrc` files to be downloaded again and overwritten.   
 
 ## Credits
-* [Spicetify Lyrics Plus](https://github.com/spicetify/spicetify-cli/tree/master/CustomApps/lyrics-plus)
+
+This project is a Docker wrapper for the excellent `mxlrc` tool. All credits for the actual functionality go to the original developer.
+
+-   **Original mxlrc Repository:**  [github.com/fashni/MxLRC](https://github.com/fashni/MxLRC "null")
+-   **Spicetify Lyrics Plus:** [github.com/spicetify/spicetify-cli](https://github.com/spicetify/spicetify-cli/tree/master/CustomApps/lyrics-plus "null")
