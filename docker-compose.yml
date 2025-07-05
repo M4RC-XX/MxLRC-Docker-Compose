@@ -1,24 +1,18 @@
 services:
   mxlrc:
     container_name: mxlrc
-    build: .
-    platform: linux/arm64
-    # Restart policy: 'no' means the container will not restart after the script finishes.
-    # Ideal for a task that runs only once.
+    image: ghcr.io/m4rc-xx/mxlrc:latest
     restart: 'no'
 
     # --- Volumes ---
-    # This is where your local music directory is "mounted" into the container.
-    # Adjust the path on the left to your actual path.
-    # The path on the right is the path inside the container.
+    # This is where the user's local music directory is "mounted" into the container.
+    # The user needs to adjust the path on the left to their actual path.
     volumes:
-      - /media/pi/Harddrive/Music:/music
+      - /media/pi/Harddrive/Music::/music # Example: Mounts a 'music' folder from the current directory
 
-    # --- Environment variables ---
-    # This is where the container is configured. These values are read by the entrypoint.sh script.
     environment:
-      # Your personal Musixmatch token
-      - MX_TOKEN=<Musixmatch-TOKEN>
+      # The user's personal Musixmatch token
+      - MX_TOKEN= #Musixmatch Usertoken
 
       # The directory inside the container to be scanned.
       # Must match the target path in the "volumes" section.
