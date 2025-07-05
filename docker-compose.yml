@@ -1,39 +1,32 @@
-# docker-compose.yml für den mxlrc-Downloader
-
-# Version der Docker-Compose-Syntax
-version: '3.8'
-
 services:
-  # Name des Services
-  mxlrc-downloader:
-    # Anweisung, das Image aus dem Dockerfile im aktuellen Verzeichnis zu bauen
+  mxlrc:
+    container_name: mxlrc
     build: .
-    # WICHTIG: Definiert die Zielplattform. Unbedingt für den Raspberry Pi 5 erforderlich!
     platform: linux/arm64
-    # Neustart-Politik: 'no' bedeutet, dass der Container nach Beendigung des Skripts nicht neu startet.
-    # Ideal für eine Aufgabe, die nur einmal ausgeführt wird.
+    # Restart policy: 'no' means the container will not restart after the script finishes.
+    # Ideal for a task that runs only once.
     restart: 'no'
 
     # --- Volumes ---
-    # Hier wird Ihr lokales Musikverzeichnis in den Container "eingehängt".
-    # Passen Sie den Pfad auf der linken Seite an Ihren tatsächlichen Pfad an.
-    # Der Pfad auf der rechten Seite ist der Pfad innerhalb des Containers.
+    # This is where your local music directory is "mounted" into the container.
+    # Adjust the path on the left to your actual path.
+    # The path on the right is the path inside the container.
     volumes:
-      - /media/pi/Toshiba/Musik/Rap/Interpreten:/music
+      - /media/pi/Harddrive/Music:/music
 
-    # --- Umgebungsvariablen ---
-    # Hier wird der Container konfiguriert. Diese Werte werden vom entrypoint.sh-Skript gelesen.
+    # --- Environment variables ---
+    # This is where the container is configured. These values are read by the entrypoint.sh script.
     environment:
-      # Ihr persönlicher Musixmatch-Token
-      - MX_TOKEN=
+      # Your personal Musixmatch token
+      - MX_TOKEN=<Musixmatch-TOKEN>
 
-      # Das Verzeichnis im Container, das durchsucht werden soll.
-      # Muss mit dem Zielpfad im "volumes"-Abschnitt übereinstimmen.
+      # The directory inside the container to be scanned.
+      # Must match the target path in the "volumes" section.
       - MUSIC_DIR=/music
 
-      # Zeit in Sekunden, die zwischen den einzelnen Downloads gewartet wird.
+      # Time in seconds to wait between individual downloads.
       - SLEEP_TIME=15
 
-      # Auf "true" setzen, um bereits vorhandene .lrc-Dateien zu überschreiben.
-      # Andernfalls auf "false" setzen.
-      - UPDATE_FILES=true
+      # Set to "true" to overwrite existing .lrc files.
+      # Otherwise, set to "false".
+      - UPDATE_FILES=false
