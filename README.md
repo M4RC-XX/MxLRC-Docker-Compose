@@ -1,4 +1,4 @@
-# MxLRC Docker-Compose
+# MxLRC Docker-Compose on Raspberry Pi (ARM64)
 
 This repository provides a simple way to run [mxlrc](https://github.com/fashni/MxLRC) a command-line tool for downloading .lrc lyric files from [Musixmatch](https://www.musixmatch.com/), inside a Docker container. The setup is optimized for use on a Raspberry Pi (ARM64).
 
