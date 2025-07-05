@@ -1,32 +1,32 @@
 #!/bin/sh
-# entrypoint.sh - Start-Skript für den mxlrc-Container
+# entrypoint.sh - Startup script for the mxlrc container
 
-# Bricht das Skript bei Fehlern sofort ab
+# Exit immediately if a command exits with a non-zero status.
 set -e
 
-# --- Konfiguration aus Umgebungsvariablen lesen ---
-# Standardwerte werden verwendet, falls die Variablen nicht gesetzt sind.
+# --- Read configuration from environment variables ---
+# Default values are used if the variables are not set.
 MUSIC_DIR_INTERNAL=${MUSIC_DIR:-/music}
 SLEEP_TIME_INTERNAL=${SLEEP_TIME:-15}
 UPDATE_FLAG=""
 
-# Überprüfen, ob der Musixmatch-Token gesetzt ist. Wenn nicht, beenden.
+# Check if the Musixmatch token is set. If not, exit.
 if [ -z "$MX_TOKEN" ]; then
-    echo "Fehler: Die Umgebungsvariable MX_TOKEN ist nicht gesetzt."
+    echo "Error: The environment variable MX_TOKEN is not set."
     exit 1
 fi
 
-# Wenn UPDATE_FILES auf "true" gesetzt ist, fügen wir das --update Flag hinzu.
+# If UPDATE_FILES is set to "true", add the --update flag.
 if [ "$UPDATE_FILES" = "true" ]; then
     UPDATE_FLAG="--update"
 fi
 
-echo "Starte den Download der Liedtexte..."
-echo "Zielverzeichnis (im Container): $MUSIC_DIR_INTERNAL"
-echo "Pausenzeit zwischen Anfragen: ${SLEEP_TIME_INTERNAL}s"
+echo "Starting the download of the lyrics..."
+echo "Target directory (in container): $MUSIC_DIR_INTERNAL"
+echo "Sleep time between requests: ${SLEEP_TIME_INTERNAL}s"
 
-# Führe das eigentliche Python-Skript mit allen Parametern aus.
-# 'exec' ersetzt den aktuellen Prozess, was eine bewährte Methode in Docker ist.
+# Execute the actual Python script with all parameters.
+# 'exec' replaces the current process, which is a best practice in Docker.
 exec python mxlrc.py \
     --token "$MX_TOKEN" \
     -s "$MUSIC_DIR_INTERNAL" \
