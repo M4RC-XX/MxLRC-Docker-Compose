@@ -1,26 +1,26 @@
-# Dockerfile für mxlrc auf dem Raspberry Pi 5
+# Dockerfile for mxlrc on the Raspberry Pi ARM64
 
-# 1. Basis-Image auswählen
-# Wir verwenden ein schlankes Python-Image, das für die ARM64-Architektur des Raspberry Pi 5 geeignet ist.
+# 1. Select base image
+# We are using a slim Python image suitable for the ARM64 architecture of the Raspberry Pi 5.
 FROM python:3.11-slim
 
-# 2. Arbeitsverzeichnis im Container festlegen
-# Alle nachfolgenden Befehle werden in diesem Verzeichnis ausgeführt.
+# 2. Set the working directory in the container
+# All subsequent commands will be executed in this directory.
 WORKDIR /app
 
-# 3. Benötigte Python-Pakete installieren
-# Zuerst kopieren wir die requirements.txt und installieren dann die Abhängigkeiten.
-# --no-cache-dir reduziert die Größe des finalen Images.
+# 3. Install required Python packages
+# First, we copy the requirements.txt and then install the dependencies.
+# --no-cache-dir reduces the size of the final image.
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 4. Anwendungsdateien kopieren
-# Wir kopieren das Haupt-Skript und das Entrypoint-Skript in das Arbeitsverzeichnis.
+# 4. Copy application files
+# We copy the main script and the entrypoint script into the working directory.
 COPY mxlrc.py .
 COPY entrypoint.sh .
 
-# 5. Entrypoint-Skript ausführbar machen
+# 5. Make the entrypoint script executable
 RUN chmod +x entrypoint.sh
 
-# 6. Den Container so konfigurieren, dass er beim Start unser Skript ausführt
+# 6. Configure the container to run our script on startup
 ENTRYPOINT ["./entrypoint.sh"]
