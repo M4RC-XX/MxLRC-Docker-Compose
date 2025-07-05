@@ -25,7 +25,7 @@ services:
     # Hier wird der Container konfiguriert. Diese Werte werden vom entrypoint.sh-Skript gelesen.
     environment:
       # Ihr persönlicher Musixmatch-Token
-      - MX_TOKEN=25070582c4feea509a78235159f7d50a59d80fb4b02645607c826f
+      - MX_TOKEN=
 
       # Das Verzeichnis im Container, das durchsucht werden soll.
       # Muss mit dem Zielpfad im "volumes"-Abschnitt übereinstimmen.
